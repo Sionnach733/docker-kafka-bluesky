@@ -1,0 +1,6 @@
+.git
+.idea
+*.iml
+out
+target
+Docker-dir
