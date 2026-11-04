@@ -1,4 +1,4 @@
-# docker-kafka-twitter4j
+# docker-kafka-bluesky
 Sending a live social media stream across Kafka in a Docker environment.
 
 Originally this streamed tweets via twitter4j, but the Twitter v1.1 streaming API
