@@ -1,4 +1,5 @@
-import java.util.Arrays;
+import java.time.Duration;
+import java.util.Collections;
 import java.util.Properties;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -9,7 +10,7 @@ public class MyKafkaConsumer {
 
     public static void main(String[] args) {
         Properties props = new Properties();
-        props.put("bootstrap.servers", "192.168.99.100:9092");
+        props.put("bootstrap.servers", KafkaConfig.bootstrapServers());
         props.put("group.id", "group-1");
         props.put("enable.auto.commit", "true");
         props.put("auto.commit.interval.ms", "1000");
@@ -18,16 +19,15 @@ public class MyKafkaConsumer {
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 
-        KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(props);
-        kafkaConsumer.subscribe(Arrays.asList("HelloKafkaTopic"));
-        while (true) {
-            ConsumerRecords<String, String> records = kafkaConsumer.poll(100);
-            for (ConsumerRecord<String, String> record : records) {
-                System.out.printf("offset = %d, value = %s", record.offset(), record.value());
-                System.out.println();
+        try (KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(props)) {
+            kafkaConsumer.subscribe(Collections.singletonList(KafkaConfig.topic()));
+            while (true) {
+                ConsumerRecords<String, String> records = kafkaConsumer.poll(Duration.ofMillis(100));
+                for (ConsumerRecord<String, String> record : records) {
+                    System.out.printf("offset = %d, value = %s%n", record.offset(), record.value());
+                }
             }
         }
-
     }
 
 }
